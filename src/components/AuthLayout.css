@@ -37,11 +37,13 @@
 }
 
 .auth-layout__tagline {
-  font-family: var(--font-body);
+  font-family: 'Roboto', sans-serif;
+  display: flex;
   font-size: 0.85rem;
   color: var(--color-text-muted);
   line-height: 1.7;
   text-align: justify;
+  margin-top: 32px;
   margin-bottom: 32px;
 }
 
@@ -59,9 +61,9 @@
   gap: 14px;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--color-gray-100);
-  background: var(--color-off-white);
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  /* border: 1.5px solid var(--color-gray-100); */
+  /* background: var(--color-off-white); */
+  /* transition: border-color var(--transition-fast), background var(--transition-fast); */
 }
 
 .auth-layout__feature-item--active {
@@ -90,7 +92,7 @@
 }
 
 .auth-layout__feature-text strong {
-  font-family: var(--font-body);
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--color-navy);
@@ -98,7 +100,8 @@
 }
 
 .auth-layout__feature-text span {
-  font-family: var(--font-body);
+  display: flex;
+  font-family:'Roboto', sans-serif;
   font-size: 0.78rem;
   color: var(--color-text-muted);
   line-height: 1.5;
@@ -107,7 +110,7 @@
 
 .auth-layout__brand {
   margin-top: 28px;
-  font-family: var(--font-display);
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -184,7 +187,7 @@
 }
 
 .auth-layout__form-title {
-  font-family: var(--font-display);
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 3.6rem;
   font-weight: 800;
   letter-spacing: -0.02em;

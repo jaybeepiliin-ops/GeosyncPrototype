@@ -27,11 +27,16 @@ const FEATURES = [
 ]
 
 export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle }) {
+  <style>
+    fontFamily: 'LEMON MILK Pro FTR, sans-serif',
+        fontWeight: 700,
+        fontSize: h * 1.60,
+  </style>
   return (
     <div className="auth-layout">
       {/* ── Left sidebar panel ── */}
       <aside className="auth-layout__sidebar">
-        <div className="auth-layout__sidebar-inner">
+        <div className="auth-layout__sidebar-inner">  
           <div className="auth-layout__logo auth-layout__logo-center">
             <GeoSyncLogo size="md" theme="dark" />
           </div>

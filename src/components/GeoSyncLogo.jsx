@@ -8,19 +8,20 @@ export default function GeoSyncLogo({ size = 'md', theme = 'dark' }) {
   const color = theme === 'light' ? '#ffffff' : '#0d1b3e'
 
   return (
-    <div className="geosync-logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div className="geosync-logo" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
       <img
         src={gsmLogo}
         alt="GSM logo"
         width={h * 1.90}
-        height={h * 1.40}
-        style={{ display: 'block' }}
+        height={h * 1.30}
+        style={{ display: 'block', marginTop: '15px' }}
       />
       <span style={{
-        fontFamily: 'var(--font-display)',
+        fontFamily: 'LEMON MILK Pro FTR, sans-serif',
         fontWeight: 700,
-        fontSize: h * 1.80,
+        fontSize: h * 1.60,
         letterSpacing: '-0.02em',
+        marginTop: 10,
         color,
         lineHeight: 1,
       }}>
