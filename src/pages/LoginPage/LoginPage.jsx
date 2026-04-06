@@ -38,7 +38,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout panelTitle="WELCOME?" panelSubtitle="Login using your registered email">
+    <AuthLayout panelTitle="WELCOME" panelSubtitle="Login using your registered email">
       <form className="login-form" onSubmit={handleSubmit} noValidate>
         <FormInput
           label="Email"
