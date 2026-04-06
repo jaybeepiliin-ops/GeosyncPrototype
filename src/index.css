@@ -109,7 +109,7 @@ input, textarea, select {
 }
 
 img, svg {
-  display: block;
+  display: flex-shrink: 0;
 }
 
 ul, ol {
