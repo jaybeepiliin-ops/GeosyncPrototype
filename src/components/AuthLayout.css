@@ -2,8 +2,6 @@
    AuthLayout — Two-panel authentication shell
    ============================================ */
 
-/* ── LEMON MILK PRO FONT (OTF) ── */
-
 @font-face {
   font-family: 'LemonMilk';
   src: url('fonts/Lemon\ Milk\ Pro\ Regular.otf') format('opentype');
@@ -12,28 +10,35 @@
   font-display: swap;
 }
 
-/* Apply Lemon Milk everywhere */
 .auth-layout *,
 .auth-layout__sidebar *,
 .auth-layout__main * {
   font-family: 'LemonMilk', sans-serif !important;
 }
 
+/* Root container — position:relative so all absolute children
+   are anchored to it. min-height drives the full viewport height. */
 .auth-layout {
-  display: flex;
+  position: relative;
   min-height: 100vh;
   background: var(--color-white);
+  overflow: hidden;
 }
 
 /* ── LEFT SIDEBAR ── */
+/* Absolutely pinned to the left — never participates in any flow */
 .auth-layout__sidebar {
-  display: flex;
-  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
   width: 550px;
-  flex-shrink: 0;
   background: var(--color-white);
-  position: relative;
   border-right: 1px solid #e0e0e0;
+  border-radius: 0 24px 24px 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 
 .auth-layout__sidebar-inner {
@@ -44,10 +49,6 @@
   overflow-y: auto;
 }
 
-/* .auth-layout__logo {
-  margin-bottom: 28px;
-} */
-
 .auth-layout__logo-center {
   display: flex;
   justify-content: center;
@@ -56,7 +57,6 @@
 
 .auth-layout__tagline {
   font-family: 'Roboto', sans-serif;
-  display: flex;
   font-size: 0.85rem;
   color: var(--color-text-muted);
   line-height: 1.7;
@@ -79,9 +79,6 @@
   gap: 14px;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  /* border: 1.5px solid var(--color-gray-100); */
-  /* background: var(--color-off-white); */
-  /* transition: border-color var(--transition-fast), background var(--transition-fast); */
 }
 
 .auth-layout__feature-item--active {
@@ -113,14 +110,12 @@
   font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
-  font-size: 0.88rem;
   color: var(--color-navy);
   line-height: 1.3;
 }
 
 .auth-layout__feature-text span {
-  display: flex;
-  font-family:'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 0.78rem;
   color: var(--color-text-muted);
   line-height: 1.5;
@@ -132,34 +127,37 @@
   font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
-  font-size: 0.82rem;
   letter-spacing: 0.18em;
   color: var(--color-sky);
   text-align: center;
 }
 
-/* ── DIVIDER STRIP ── */
+/* ── DIVIDER ── */
+/* Absolutely anchored at left:550px — grows rightward via width only.
+   z-index: 5 — above main (z:1) but below form-wrapper (z:20)
+   so the form floats visibly on top of the blue bg once covered. */
 .auth-layout__divider {
   position: absolute;
-  left: 550px;
   top: 0;
   bottom: 0;
-  width: 60px;
-  background-image: url('/blue.jpg');
-  background-color: #1a3a6e; /* Fallback color if image doesn't load */
+  left: 550px;
+  width: 60px; /* overridden by inline style */
+  background-image: url('./assets/blue.jpg');
+  background-color: #1a3a6e;
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 32px;
   overflow: hidden;
-  cursor: pointer;
-  draggable: true;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  user-select: none;
 }
 
-
-/* Simulated aerial texture */
 .auth-layout__divider::before {
   content: '';
   position: absolute;
@@ -172,6 +170,7 @@
       transparent 2px,
       transparent 8px
     );
+  pointer-events: none;
 }
 
 .auth-layout__divider-label {
@@ -185,44 +184,74 @@
   color: rgba(255,255,255,0.65);
   position: relative;
   z-index: 1;
+  user-select: none;
+}
+
+.auth-layout__divider-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: rgba(255,255,255,0.8);
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
 }
 
 /* ── RIGHT MAIN PANEL ── */
+/* Transparent bg — divider's blue shows through as it expands.
+   The page root's white is the fallback background underneath. */
 .auth-layout__main {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 550px;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 48px;
-  background: var(--color-white);
-  position: relative;
-  z-index: 2;
+  background: transparent;
+  /* z-index: 1; */
 }
 
-/* ── BLUE OVERLAY ── */
-.auth-layout__overlay {
+/* Scrim — darkens behind the form card as the divider fully expands */
+.auth-layout__main::before {
+  content: '';
   position: absolute;
-  top: 0;
-  height: 100%;
-  background:
-    linear-gradient(
-      180deg,
-      var(--color-navy) 0%,
-      #1a3a6e 30%,
-      #2a6080 60%,
-      #1a3a5c 100%
-    );
-  z-index: 1;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.5s ease;
   pointer-events: none;
+  z-index: -1;
 }
 
+.auth-layout__main--expanded::before {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* Form wrapper — sits above divider (z:20 > divider z:5).
+   White card with lift animation when the divider fully expands. */
 .auth-layout__form-wrapper {
   width: 100%;
   max-width: 480px;
+  position: relative;
+  z-index: 20;
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  box-shadow 0.5s ease;
+}
+
+.auth-layout__main--expanded .auth-layout__form-wrapper {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
 }
 
 .auth-layout__form-header {
-  margin-bottom: 40px;
+  margin-bottom: 28px;
   text-align: center;
 }
 
@@ -230,7 +259,6 @@
   font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 3.6rem;
   font-weight: 800;
-  font-size: 3.6rem;
   letter-spacing: -0.02em;
   color: var(--color-navy);
   line-height: 1;
@@ -246,22 +274,27 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  .auth-layout {
-    flex-direction: column;
-  }
-
   .auth-layout__sidebar {
+    position: relative;
     width: 100%;
-    flex-direction: column;
+    border-radius: 0;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .auth-layout__divider {
-    width: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    width: 100% !important;
     height: 36px;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     padding: 0 32px 0 0;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
 
   .auth-layout__divider-label {
@@ -271,7 +304,22 @@
   }
 
   .auth-layout__main {
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     padding: 32px 24px;
+    background: var(--color-white);
+  }
+
+  .auth-layout__main::before {
+    display: none;
+  }
+
+  .auth-layout__form-wrapper {
+    padding: 28px 24px;
+    border-radius: 16px;
   }
 
   .auth-layout__form-title {

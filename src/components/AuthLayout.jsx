@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import GeoSyncLogo from './GeoSyncLogo.jsx'
 import './AuthLayout.css'
+
+const SIDEBAR_WIDTH = 550
+const DIVIDER_MIN = 60
 
 const FEATURES = [
   {
@@ -27,30 +30,51 @@ const FEATURES = [
 ]
 
 export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle }) {
-  const [overlayWidth, setOverlayWidth] = useState(0);
+  const [dividerWidth, setDividerWidth] = useState(DIVIDER_MIN)
+  const [isAutoExpanded, setIsAutoExpanded] = useState(false)
+  const isDragging = useRef(false)
 
   const handleMouseDown = (e) => {
-    const startX = e.clientX;
-    const initialWidth = overlayWidth;
+  if (isAutoExpanded) return
+  e.preventDefault()
+  isDragging.current = true
 
-    const handleMouseMove = (e) => {
-      const deltaX = e.clientX - startX;
-      const newWidth = Math.max(0, initialWidth + deltaX);
-      setOverlayWidth(newWidth);
-    };
+  const maxWidth = window.innerWidth - SIDEBAR_WIDTH
 
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+  const handleMouseMove = (e) => {
+    if (!isDragging.current) return
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
+    // Right edge tracks cursor; left edge stays pinned at SIDEBAR_WIDTH
+    const newWidth = Math.max(DIVIDER_MIN, Math.min(maxWidth, e.clientX - SIDEBAR_WIDTH))
+
+    if (newWidth >= maxWidth * 0.65) {
+      setDividerWidth(maxWidth)
+      setIsAutoExpanded(true)
+      isDragging.current = false
+    } else {
+      setDividerWidth(newWidth)
+    }
+  }
+
+  const handleMouseUp = () => {
+    isDragging.current = false
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleMouseUp)
+  }
+
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+}
+
+  const handleClose = () => {
+    setDividerWidth(DIVIDER_MIN)
+    setIsAutoExpanded(false)
+  }
 
   return (
     <div className="auth-layout">
-      {/* ── Left sidebar panel ── */}
+
+      {/* ── Left sidebar — fixed left column ── */}
       <aside className="auth-layout__sidebar">
         <div className="auth-layout__sidebar-inner">
           <div className="auth-layout__logo">
@@ -79,23 +103,34 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
 
           <p className="auth-layout__brand">GEOSPECTRUM</p>
         </div>
-
-        {/* Divider strip with aerial photo */}
-        <div 
-          className="auth-layout__divider" 
-          onMouseDown={handleMouseDown} 
-          style={{ 
-            width: overlayWidth || 60, 
-            cursor: 'ew-resize',
-            zIndex: overlayWidth > 60 ? 1 : 3
-          }}
-        >
-          {overlayWidth <= 60 && <div className="auth-layout__divider-label">DRAG RIGHT</div>}
-        
-        </div>
       </aside>
 
-      {/* ── Right form panel ── */}
+      {/* ── Divider — expands rightward, acts as bg for the form ── */}
+      <div
+        className="auth-layout__divider"
+        onMouseDown={handleMouseDown}
+        style={{
+          width: dividerWidth,
+          cursor: isAutoExpanded ? 'default' : 'ew-resize',
+          borderRadius: isAutoExpanded ? '0' : '0 24px 24px 0',
+          transition: isAutoExpanded
+            ? 'width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 0.4s ease'
+            : 'border-radius 0.4s ease',
+        }}
+      >
+        {!isAutoExpanded && (
+          <div className="auth-layout__divider-label">
+            {dividerWidth > DIVIDER_MIN ? 'DRAG LEFT' : 'DRAG RIGHT'}
+          </div>
+        )}
+        {isAutoExpanded && (
+          <div className="auth-layout__divider-close" onClick={handleClose}>
+            ✕
+          </div>
+        )}
+      </div>
+
+      {/* ── Right form panel — absolutely fills the right side, never moves ── */}
       <main className="auth-layout__main">
         <div className="auth-layout__form-wrapper">
           <div className="auth-layout__form-header">
@@ -108,13 +143,6 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
         </div>
       </main>
 
-      {/* Blue overlay */}
-      {overlayWidth > 0 && (
-        <div 
-          className="auth-layout__overlay" 
-          style={{ width: overlayWidth, left: 550 }}
-        />
-      )}
     </div>
   )
 }
