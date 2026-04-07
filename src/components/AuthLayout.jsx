@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import GeoSyncLogo from './GeoSyncLogo.jsx'
 import './AuthLayout.css'
 
@@ -32,49 +32,83 @@ const FEATURES = [
 export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle }) {
   const [dividerWidth, setDividerWidth] = useState(DIVIDER_MIN)
   const [isAutoExpanded, setIsAutoExpanded] = useState(false)
+
+  // 0 = fully white, 1 = fully transparent
+  const [formBgOpacity, setFormBgOpacity] = useState(0)
+
   const isDragging = useRef(false)
+  const formWrapperRef = useRef(null)
 
-  const handleMouseDown = (e) => {
-  if (isAutoExpanded) return
-  e.preventDefault()
-  isDragging.current = true
+  const handleMouseDown = useCallback((e) => {
+    if (isAutoExpanded) return
+    e.preventDefault()
+    isDragging.current = true
 
-  const maxWidth = window.innerWidth - SIDEBAR_WIDTH
+    const maxWidth = window.innerWidth - SIDEBAR_WIDTH
 
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return
+    const handleMouseMove = (e) => {
+      if (!isDragging.current) return
 
-    // Right edge tracks cursor; left edge stays pinned at SIDEBAR_WIDTH
-    const newWidth = Math.max(DIVIDER_MIN, Math.min(maxWidth, e.clientX - SIDEBAR_WIDTH))
+      const newWidth = Math.max(DIVIDER_MIN, Math.min(maxWidth, e.clientX - SIDEBAR_WIDTH))
 
-    if (newWidth >= maxWidth * 0.65) {
-      setDividerWidth(maxWidth)
-      setIsAutoExpanded(true)
-      isDragging.current = false
-    } else {
-      setDividerWidth(newWidth)
+      // Auto-expand once user drags at least 20% of available width
+      if (newWidth >= maxWidth * 0.2) {
+        setDividerWidth(maxWidth)
+        setIsAutoExpanded(true)
+        setFormBgOpacity(1) // fully transparent when fully expanded
+        isDragging.current = false
+      } else {
+        setDividerWidth(newWidth)
+
+        // Calculate how much the divider overlaps the form wrapper
+        if (formWrapperRef.current) {
+          const wrapperRect = formWrapperRef.current.getBoundingClientRect()
+          const dividerRightEdge = SIDEBAR_WIDTH + newWidth
+
+          // Start fading when divider right edge hits the wrapper's left edge
+          // Fully transparent when divider covers half the wrapper's width
+          const fadeStart = wrapperRect.left
+          const fadeEnd = wrapperRect.left + wrapperRect.width * 0.5
+
+          if (dividerRightEdge <= fadeStart) {
+            setFormBgOpacity(0)
+          } else if (dividerRightEdge >= fadeEnd) {
+            setFormBgOpacity(1)
+          } else {
+            const progress = (dividerRightEdge - fadeStart) / (fadeEnd - fadeStart)
+            setFormBgOpacity(progress)
+          }
+        }
+      }
     }
-  }
 
-  const handleMouseUp = () => {
-    isDragging.current = false
-    document.removeEventListener('mousemove', handleMouseMove)
-    document.removeEventListener('mouseup', handleMouseUp)
-  }
+    const handleMouseUp = () => {
+      isDragging.current = false
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
 
-  document.addEventListener('mousemove', handleMouseMove)
-  document.addEventListener('mouseup', handleMouseUp)
-}
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }, [isAutoExpanded])
 
   const handleClose = () => {
     setDividerWidth(DIVIDER_MIN)
     setIsAutoExpanded(false)
+    setFormBgOpacity(0)
   }
+
+  // Interpolate background: white → transparent
+  const formWrapperBg = `rgba(255, 255, 255, ${1 - formBgOpacity})`
+
+  const formWrapperShadow = formBgOpacity > 0.5
+    ? '0 24px 64px rgba(0, 0, 0, 0.28)'
+    : '0 8px 32px rgba(0, 0, 0, 0.10)'
 
   return (
     <div className="auth-layout">
 
-      {/* ── Left sidebar — fixed left column ── */}
+      {/* ── Left sidebar ── */}
       <aside className="auth-layout__sidebar">
         <div className="auth-layout__sidebar-inner">
           <div className="auth-layout__logo">
@@ -105,7 +139,7 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
         </div>
       </aside>
 
-      {/* ── Divider — expands rightward, acts as bg for the form ── */}
+      {/* ── Divider ── */}
       <div
         className="auth-layout__divider"
         onMouseDown={handleMouseDown}
@@ -130,9 +164,21 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
         )}
       </div>
 
-      {/* ── Right form panel — absolutely fills the right side, never moves ── */}
-      <main className="auth-layout__main">
-        <div className="auth-layout__form-wrapper">
+      {/* ── Right form panel ── */}
+      <main className={`auth-layout__main ${isAutoExpanded ? 'auth-layout__main--expanded' : ''}`}>
+        <div
+          ref={formWrapperRef}
+          className="auth-layout__form-wrapper"
+          style={{
+            background: formWrapperBg,
+            boxShadow: formWrapperShadow,
+            // Lift the card slightly as it goes transparent
+            transform: formBgOpacity > 0 ? `translateY(-${formBgOpacity * 4}px)` : 'none',
+            transition: isAutoExpanded
+              ? 'background 0.4s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              : 'box-shadow 0.3s ease',
+          }}
+        >
           <div className="auth-layout__form-header">
             <h1 className="auth-layout__form-title">{panelTitle}</h1>
             {panelSubtitle && (
