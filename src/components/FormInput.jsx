@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './FormInput.css'
 
 export default function FormInput({
@@ -12,18 +12,35 @@ export default function FormInput({
   required,
   autoComplete,
   error,
+  formBgOpacity = 0,
 }) {
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
 
+  useEffect(() => {
+    console.log('FormInput re-render, formBgOpacity:', formBgOpacity)
+  }, [formBgOpacity])
+
+  const navyToWhite = (alpha = 1) => {
+    const r = Math.round(15 + (255 - 15) * formBgOpacity)
+    const g = Math.round(17 + (255 - 17) * formBgOpacity)
+    const b = Math.round(64 + (255 - 64) * formBgOpacity)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
   return (
     <div className={`form-field ${error ? 'form-field--error' : ''}`}>
-      {label && ( 
-        <label className="form-field__label" htmlFor={name}>
+      {label && (
+        <label
+          className="form-field__label"
+          htmlFor={name}
+          style={{ color: navyToWhite(1), transition: 'color 0.4s ease' }}
+        >
           {label}
         </label>
       )}
+
       <div className="form-field__input-wrapper">
         <input
           id={name}
@@ -47,8 +64,17 @@ export default function FormInput({
           </button>
         )}
       </div>
+
       {error && <p className="form-field__error">{error}</p>}
-      {helpText && !error && <p className="form-field__help">{helpText}</p>}
+
+      {helpText && !error && (
+        <p
+          className="form-field__help"
+          style={{ color: navyToWhite(0.7), transition: 'color 0.4s ease' }}
+        >
+          {helpText}
+        </p>
+      )}
     </div>
   )
 }
