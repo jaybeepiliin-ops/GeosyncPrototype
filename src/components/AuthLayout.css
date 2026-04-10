@@ -16,8 +16,6 @@
   font-family: 'LemonMilk', sans-serif !important;
 }
 
-/* Root container — position:relative so all absolute children
-   are anchored to it. min-height drives the full viewport height. */
 .auth-layout {
   position: relative;
   min-height: 100vh;
@@ -26,7 +24,6 @@
 }
 
 /* ── LEFT SIDEBAR ── */
-/* Absolutely pinned to the left — never participates in any flow */
 .auth-layout__sidebar {
   position: absolute;
   top: 0;
@@ -65,7 +62,6 @@
   margin-bottom: 32px;
 }
 
-/* Feature list */
 .auth-layout__features {
   display: flex;
   flex-direction: column;
@@ -133,16 +129,12 @@
 }
 
 /* ── DIVIDER ── */
-/* Absolutely anchored at left:550px — grows rightward via width only.
-   z-index: 5 — above main (z:1) but below form-wrapper (z:20)
-   so the form floats visibly on top of the blue bg once covered. */
 .auth-layout__divider {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 550px;
-  width: 60px; /* overridden by inline style */
-  background-image: url('./assets/blue.jpg');
+  left: 530px;
+  width: 90 px;
   background-color: #1a3a6e;
   background-size: cover;
   background-position: center;
@@ -158,19 +150,18 @@
   user-select: none;
 }
 
-.auth-layout__divider::before {
-  content: '';
+.auth-layout__divider-stripe {
   position: absolute;
   inset: 0;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.02) 0px,
-      rgba(255,255,255,0.02) 2px,
-      transparent 2px,
-      transparent 8px
-    );
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.02) 0px,
+    rgba(255,255,255,0.02) 2px,
+    transparent 2px,
+    transparent 8px
+  );
   pointer-events: none;
+  z-index: 3;
 }
 
 .auth-layout__divider-label {
@@ -183,7 +174,7 @@
   letter-spacing: 0.2em;
   color: rgba(255,255,255,0.65);
   position: relative;
-  z-index: 1;
+  z-index: 4;
   user-select: none;
 }
 
@@ -194,13 +185,11 @@
   color: rgba(255,255,255,0.8);
   font-size: 1.2rem;
   cursor: pointer;
-  z-index: 2;
+  z-index: 4;
   user-select: none;
 }
 
 /* ── RIGHT MAIN PANEL ── */
-/* Transparent bg — divider's blue shows through as it expands.
-   The page root's white is the fallback background underneath. */
 .auth-layout__main {
   position: absolute;
   top: 0;
@@ -208,14 +197,14 @@
   left: 550px;
   right: 0;
   display: flex;
+  flex-direction: column;        /* stack header above card */
   align-items: center;
   justify-content: center;
+  gap: 16px;                     /* breathing room between header and card */
   padding: 48px;
   background: transparent;
-  /* z-index: 1; */
 }
 
-/* Scrim — darkens behind the form card as the divider fully expands */
 .auth-layout__main::before {
   content: '';
   position: absolute;
@@ -230,8 +219,31 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
-/* Form wrapper — sits above divider (z:20 > divider z:5).
-   White card with lift animation when the divider fully expands. */
+/* ── FORM HEADER (outside the card) ── */
+.auth-layout__form-header {
+  width: 100%;
+  max-width: 480px;              /* matches the card width exactly */
+  text-align: center;
+}
+
+.auth-layout__form-title {
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
+  font-size: 3.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.auth-layout__form-subtitle {
+  font-family: 'LemonMilk' !important;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ── FORM CARD (fields only) ── */
 .auth-layout__form-wrapper {
   width: 100%;
   max-width: 480px;
@@ -248,28 +260,6 @@
 .auth-layout__main--expanded .auth-layout__form-wrapper {
   transform: translateY(-4px);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
-}
-
-.auth-layout__form-header {
-  margin-bottom: 28px;
-  text-align: center;
-}
-
-.auth-layout__form-title {
-  font-family: 'LEMON MILK Pro FTR', sans-serif;
-  font-size: 3.6rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--color-navy);
-  line-height: 1;
-  margin-bottom: 10px;
-}
-
-.auth-layout__form-subtitle {
-  font-family: 'LemonMilk' !important;
-  font-weight: 400;
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
 }
 
 /* ── RESPONSIVE ── */

@@ -1,9 +1,14 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import GeoSyncLogo from './GeoSyncLogo.jsx'
 import './AuthLayout.css'
+import blueBg from './assets/blue.jpg'
+import greenBg from './assets/green.jpg'
 
 const SIDEBAR_WIDTH = 550
 const DIVIDER_MIN = 60
+
+// 👇 Add or remove images here anytime
+const DIVIDER_IMAGES = [blueBg, greenBg]
 
 const FEATURES = [
   {
@@ -29,15 +34,24 @@ const FEATURES = [
   },
 ]
 
-export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle = 'Enter your details to continue'}) {
+export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle = 'Enter your details to continue' }) {
   const [dividerWidth, setDividerWidth] = useState(DIVIDER_MIN)
   const [isAutoExpanded, setIsAutoExpanded] = useState(false)
-
-  // 0 = fully white, 1 = fully transparent
   const [formBgOpacity, setFormBgOpacity] = useState(0)
+  const [currentBgIndex, setCurrentBgIndex] = useState(0)
 
   const isDragging = useRef(false)
   const formWrapperRef = useRef(null)
+
+  // Auto-cycle background every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex(prev => (prev + 1) % DIVIDER_IMAGES.length)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const prevBgIndex = (currentBgIndex - 1 + DIVIDER_IMAGES.length) % DIVIDER_IMAGES.length
 
   const handleMouseDown = useCallback((e) => {
     if (isAutoExpanded) return
@@ -51,22 +65,17 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
 
       const newWidth = Math.max(DIVIDER_MIN, Math.min(maxWidth, e.clientX - SIDEBAR_WIDTH))
 
-      // Auto-expand once user drags at least 20% of available width
       if (newWidth >= maxWidth * 0.2) {
         setDividerWidth(maxWidth)
         setIsAutoExpanded(true)
-        setFormBgOpacity(1) // fully transparent when fully expanded
+        setFormBgOpacity(1)
         isDragging.current = false
       } else {
         setDividerWidth(newWidth)
 
-        // Calculate how much the divider overlaps the form wrapper
         if (formWrapperRef.current) {
           const wrapperRect = formWrapperRef.current.getBoundingClientRect()
           const dividerRightEdge = SIDEBAR_WIDTH + newWidth
-
-          // Start fading when divider right edge hits the wrapper's left edge
-          // Fully transparent when divider covers half the wrapper's width
           const fadeStart = wrapperRect.left
           const fadeEnd = wrapperRect.left + wrapperRect.width * 0.5
 
@@ -99,18 +108,15 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
   }
 
   const interpolateToWhite = (r, g, b, opacity = 1) => {
-  const ri = Math.round(r + (255 - r) * formBgOpacity)
-  const gi = Math.round(g + (255 - g) * formBgOpacity)
-  const bi = Math.round(b + (255 - b) * formBgOpacity)
-  return `rgba(${ri}, ${gi}, ${bi}, ${opacity})`
-}
+    const ri = Math.round(r + (255 - r) * formBgOpacity)
+    const gi = Math.round(g + (255 - g) * formBgOpacity)
+    const bi = Math.round(b + (255 - b) * formBgOpacity)
+    return `rgba(${ri}, ${gi}, ${bi}, ${opacity})`
+  }
 
-// #0F1140 = rgb(15, 17, 64)
-const navyToWhite = (opacity = 1) => interpolateToWhite(15, 17, 64, opacity)
+  const navyToWhite = (opacity = 1) => interpolateToWhite(15, 17, 64, opacity)
 
-  // Interpolate background: white → transparent
   const formWrapperBg = `rgba(255, 255, 255, ${1 - formBgOpacity})`
-
   const formWrapperShadow = formBgOpacity > 0.5
     ? '0 24px 64px rgba(0, 0, 0, 0.28)'
     : '0 8px 32px rgba(0, 0, 0, 0.10)'
@@ -153,22 +159,69 @@ const navyToWhite = (opacity = 1) => interpolateToWhite(15, 17, 64, opacity)
       <div
         className="auth-layout__divider"
         onMouseDown={handleMouseDown}
+        // style={{
+        //   width: dividerWidth,
+        //   cursor: isAutoExpanded ? 'default' : 'ew-resize',
+        //   borderRadius: isAutoExpanded ? '0' : '0 25px 25px 0',
+        //   transition: isAutoExpanded
+        //     ? 'width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 0.4s ease'
+        //     : 'border-radius 0.4s ease',
+        // }}
+
         style={{
-          width: dividerWidth,
-          cursor: isAutoExpanded ? 'default' : 'ew-resize',
-          borderRadius: isAutoExpanded ? '0' : '0 24px 24px 0',
-          transition: isAutoExpanded
-            ? 'width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 0.4s ease'
-            : 'border-radius 0.4s ease',
-        }}
+        width: isAutoExpanded ? `calc(100vw - 530px)` : dividerWidth,
+        cursor: isAutoExpanded ? 'default' : 'ew-resize',
+        borderRadius: isAutoExpanded ? '0' : '0 25px 25px 0',
+        transition: isAutoExpanded
+          ? 'width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 0.4s ease'
+          : 'border-radius 0.4s ease',
+      }}
       >
+        {/* Base layer — previous image, stays put during crossfade */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${DIVIDER_IMAGES[prevBgIndex]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            borderRadius: 'inherit',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
+
+        {/* Top layer — current image, fades in via keyframe */}
+        <div
+          key={currentBgIndex}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${DIVIDER_IMAGES[currentBgIndex]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            borderRadius: 'inherit',
+            pointerEvents: 'none',
+            zIndex: 2,
+            animation: 'bgFadeIn 0.8s ease forwards',
+          }}
+        />
+
         {!isAutoExpanded && (
-          <div className="auth-layout__divider-label">
+          <div
+            className="auth-layout__divider-label"
+            style={{ position: 'relative', zIndex: 3 }}
+          >
             {dividerWidth > DIVIDER_MIN ? 'DRAG LEFT' : 'DRAG RIGHT'}
           </div>
         )}
+
         {isAutoExpanded && (
-          <div className="auth-layout__divider-close" onClick={handleClose}>
+          <div
+            className="auth-layout__divider-close"
+            style={{ position: 'relative', zIndex: 3 }}
+            onClick={handleClose}
+          >
             ✕
           </div>
         )}
@@ -176,60 +229,57 @@ const navyToWhite = (opacity = 1) => interpolateToWhite(15, 17, 64, opacity)
 
       {/* ── Right form panel ── */}
       <main className={`auth-layout__main ${isAutoExpanded ? 'auth-layout__main--expanded' : ''}`}>
-  <div
-    ref={formWrapperRef}
-    className="auth-layout__form-wrapper"
-    style={{
-      background: formWrapperBg,
-      boxShadow: formWrapperShadow,
-      transform: formBgOpacity > 0 ? `translateY(-${formBgOpacity * 4}px)` : 'none',
-      transition: isAutoExpanded
-        ? 'background 0.4s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)'
-        : 'box-shadow 0.3s ease',
-    }}
-  >
-    <div className="auth-layout__form-header">
-      <h1
-        className="auth-layout__form-title"
-        style={{
-          color: `rgb(
-            ${Math.round(15 + (255 - 15) * formBgOpacity)},
-            ${Math.round(17 + (255 - 17) * formBgOpacity)},
-            ${Math.round(64 + (255 - 64) * formBgOpacity)}
-          )`,
-          transition: 'color 0.4s ease',
-        }}
-      >
-        {panelTitle}
-      </h1>
-      {panelSubtitle && (
-        <p
-          className="auth-layout__form-subtitle"
+        <div
+          ref={formWrapperRef}
+          className="auth-layout__form-wrapper"
           style={{
-            color: `rgba(
-              ${Math.round(15 + (255 - 15) * formBgOpacity)},
-              ${Math.round(17 + (255 - 17) * formBgOpacity)},
-              ${Math.round(64 + (255 - 64) * formBgOpacity)},
-              ${0.6 + formBgOpacity * 0.4}
-            )`,
-            transition: 'color 0.4s ease',
+            background: formWrapperBg,
+            boxShadow: formWrapperShadow,
+            transform: formBgOpacity > 0 ? `translateY(-${formBgOpacity * 4}px)` : 'none',
+            transition: isAutoExpanded
+              ? 'background 0.4s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)'
+              : 'box-shadow 0.3s ease',
           }}
         >
-          {panelSubtitle}
-        </p>
-      )}
-    </div>
+          <div className="auth-layout__form-header">
+            <h1
+              className="auth-layout__form-title"
+              style={{
+                color: `rgb(
+                  ${Math.round(15 + (255 - 15) * formBgOpacity)},
+                  ${Math.round(17 + (255 - 17) * formBgOpacity)},
+                  ${Math.round(64 + (255 - 64) * formBgOpacity)}
+                )`,
+                transition: 'color 0.4s ease',
+              }}
+            >
+              {panelTitle}
+            </h1>
+            {panelSubtitle && (
+              <p
+                className="auth-layout__form-subtitle"
+                style={{
+                  color: `rgba(
+                    ${Math.round(15 + (255 - 15) * formBgOpacity)},
+                    ${Math.round(17 + (255 - 17) * formBgOpacity)},
+                    ${Math.round(64 + (255 - 64) * formBgOpacity)},
+                    ${0.6 + formBgOpacity * 0.4}
+                  )`,
+                  transition: 'color 0.4s ease',
+                }}
+              >
+                {panelSubtitle}
+              </p>
+            )}
+          </div>
 
-    {/* Pass formBgOpacity to children */}
-    {React.cloneElement(children, { formBgOpacity })}
-  </div>
-</main>
+          {React.cloneElement(children, { formBgOpacity })}
+        </div>
+      </main>
 
     </div>
   )
 }
-
-
 
 /* ─── Icons ─── */
 function CollaborationIcon() {
