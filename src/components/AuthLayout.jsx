@@ -29,7 +29,7 @@ const FEATURES = [
   },
 ]
 
-export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle }) {
+export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubtitle = 'Enter your details to continue'}) {
   const [dividerWidth, setDividerWidth] = useState(DIVIDER_MIN)
   const [isAutoExpanded, setIsAutoExpanded] = useState(false)
 
@@ -97,6 +97,16 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
     setIsAutoExpanded(false)
     setFormBgOpacity(0)
   }
+
+  const interpolateToWhite = (r, g, b, opacity = 1) => {
+  const ri = Math.round(r + (255 - r) * formBgOpacity)
+  const gi = Math.round(g + (255 - g) * formBgOpacity)
+  const bi = Math.round(b + (255 - b) * formBgOpacity)
+  return `rgba(${ri}, ${gi}, ${bi}, ${opacity})`
+}
+
+// #0F1140 = rgb(15, 17, 64)
+const navyToWhite = (opacity = 1) => interpolateToWhite(15, 17, 64, opacity)
 
   // Interpolate background: white → transparent
   const formWrapperBg = `rgba(255, 255, 255, ${1 - formBgOpacity})`
@@ -166,32 +176,60 @@ export default function AuthLayout({ children, panelTitle = 'WELCOME', panelSubt
 
       {/* ── Right form panel ── */}
       <main className={`auth-layout__main ${isAutoExpanded ? 'auth-layout__main--expanded' : ''}`}>
-        <div
-          ref={formWrapperRef}
-          className="auth-layout__form-wrapper"
+  <div
+    ref={formWrapperRef}
+    className="auth-layout__form-wrapper"
+    style={{
+      background: formWrapperBg,
+      boxShadow: formWrapperShadow,
+      transform: formBgOpacity > 0 ? `translateY(-${formBgOpacity * 4}px)` : 'none',
+      transition: isAutoExpanded
+        ? 'background 0.4s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)'
+        : 'box-shadow 0.3s ease',
+    }}
+  >
+    <div className="auth-layout__form-header">
+      <h1
+        className="auth-layout__form-title"
+        style={{
+          color: `rgb(
+            ${Math.round(15 + (255 - 15) * formBgOpacity)},
+            ${Math.round(17 + (255 - 17) * formBgOpacity)},
+            ${Math.round(64 + (255 - 64) * formBgOpacity)}
+          )`,
+          transition: 'color 0.4s ease',
+        }}
+      >
+        {panelTitle}
+      </h1>
+      {panelSubtitle && (
+        <p
+          className="auth-layout__form-subtitle"
           style={{
-            background: formWrapperBg,
-            boxShadow: formWrapperShadow,
-            // Lift the card slightly as it goes transparent
-            transform: formBgOpacity > 0 ? `translateY(-${formBgOpacity * 4}px)` : 'none',
-            transition: isAutoExpanded
-              ? 'background 0.4s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-              : 'box-shadow 0.3s ease',
+            color: `rgba(
+              ${Math.round(15 + (255 - 15) * formBgOpacity)},
+              ${Math.round(17 + (255 - 17) * formBgOpacity)},
+              ${Math.round(64 + (255 - 64) * formBgOpacity)},
+              ${0.6 + formBgOpacity * 0.4}
+            )`,
+            transition: 'color 0.4s ease',
           }}
         >
-          <div className="auth-layout__form-header">
-            <h1 className="auth-layout__form-title">{panelTitle}</h1>
-            {panelSubtitle && (
-              <p className="auth-layout__form-subtitle">{panelSubtitle}</p>
-            )}
-          </div>
-          {children}
-        </div>
-      </main>
+          {panelSubtitle}
+        </p>
+      )}
+    </div>
+
+    {/* Pass formBgOpacity to children */}
+    {React.cloneElement(children, { formBgOpacity })}
+  </div>
+</main>
 
     </div>
   )
 }
+
+
 
 /* ─── Icons ─── */
 function CollaborationIcon() {
