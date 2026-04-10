@@ -14,7 +14,6 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-navy);
 }
 
 .form-field__input-wrapper {
@@ -78,13 +77,20 @@
 
 /* Help / error text */
 .form-field__help {
-  font-family: var(--font-ui);
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.78rem;
-  color: var(--color-text-muted);
 }
 
 .form-field__error {
   font-family: var(--font-ui);
   font-size: 0.78rem;
   color: var(--color-error);
+}
+
+.auth-layout .form-field__label {
+  color: unset;
+}
+
+.auth-layout .form-field__help {
+  color: unset;
 }
