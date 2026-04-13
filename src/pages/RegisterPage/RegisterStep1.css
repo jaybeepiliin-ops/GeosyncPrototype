@@ -1,14 +1,13 @@
-/* ============================================
+/* /* ============================================
    RegisterStep1.css — shared base for all steps
    ============================================ */
-
+/* 
 .reg-step {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 14px;
 }
 
-/* Header */
 .reg-step__header {
   display: flex;
   align-items: flex-start;
@@ -41,7 +40,7 @@
   flex-shrink: 0;
 }
 
-/* Progress bars */
+
 .reg-step__progress {
   display: flex;
   gap: 6px;
@@ -62,7 +61,7 @@
   background: var(--color-blue, #1d7cda);
 }
 
-/* Section */
+
 .reg-section {
   display: flex;
   flex-direction: column;
@@ -90,7 +89,7 @@
   background: var(--color-gray-200);
 }
 
-/* Grid layouts */
+
 .reg-grid {
   display: grid;
   gap: 12px;
@@ -104,7 +103,7 @@
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-/* Custom field (select) */
+
 .reg-field {
   display: flex;
   flex-direction: column;
@@ -157,7 +156,7 @@
   color: var(--color-danger, #e53e3e);
 }
 
-/* Footer */
+
 .reg-step__footer {
   text-align: center;
   padding-top: 4px;
@@ -189,6 +188,321 @@
   }
 
   .reg-step__header {
+    flex-direction: column;
+  }
+}  */
+
+/* ============================================================
+   RegisterStep1.css
+   Scoped under .rs1 — shared by all steps via their own CSS.
+   ============================================================ */
+
+.rs1 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Header ── */
+.rs1__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rs1__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 3px;
+  line-height: 1.2;
+  font-family: var(--font-ui);
+}
+
+.rs1__subtitle {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  font-family: var(--font-ui);
+}
+
+.rs1__header-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.rs1__btn {
+  padding: 6px 18px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  line-height: 1;
+}
+
+.rs1__btn--back {
+  background: #e2e2e2;
+  color: #666;
+}
+
+.rs1__btn--back:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.rs1__btn--next {
+  background: var(--color-text);
+  color: #fff;
+}
+
+.rs1__btn--next:hover {
+  opacity: 0.88;
+}
+
+/* ── Progress bars ── */
+.rs1__progress {
+  display: flex;
+  gap: 5px;
+}
+
+.rs1__bar {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: #dde0e4;
+}
+
+.rs1__bar--on {
+  background: #e8a020;
+}
+
+.rs1__bar--done {
+  background: #e8a020;
+}
+
+/* ── Section ── */
+.rs1__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rs1__section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+}
+
+.rs1__section-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+}
+
+.rs1__section-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.rs1__divider {
+  height: 1px;
+  background: #e4e7eb;
+  margin-top: -4px;
+}
+
+/* ── Field grid rows ── */
+.rs1__row {
+  display: grid;
+  gap: 12px;
+}
+
+.rs1__row--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.rs1__row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.rs1__row--gap-top {
+  margin-top: 12px;
+}
+
+/* ── Individual field ── */
+.rs1__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rs1__label {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.rs1__req {
+  color: #e53e3e;
+  margin-left: 1px;
+}
+
+/* ── Text input ── */
+.rs1__input {
+  height: 34px;
+  width: 100%;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.rs1__input:focus {
+  border-color: #1a9f7a;
+  box-shadow: 0 0 0 3px rgba(26, 159, 122, 0.12);
+}
+
+.rs1__input--err {
+  border-color: #e53e3e !important;
+}
+
+.rs1__input--date {
+  color: #aaa;
+}
+
+/* ── Password ── */
+.rs1__pw-wrap {
+  position: relative;
+}
+
+.rs1__pw-eye {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.rs1__pw-eye svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Select ── */
+.rs1__sel-wrap {
+  position: relative;
+}
+
+.rs1__select {
+  height: 34px;
+  width: 100%;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 6px;
+  padding: 0 28px 0 10px;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text);
+  background: #fff;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.rs1__select:focus {
+  border-color: #1a9f7a;
+}
+
+.rs1__sel-arrow {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.55rem;
+  color: #888;
+  pointer-events: none;
+}
+
+/* ── Date wrap ── */
+.rs1__date-wrap {
+  position: relative;
+}
+
+/* ── Hint text (green dot + label) ── */
+.rs1__hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  color: #1a9f7a;
+}
+
+.rs1__hint-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1a9f7a;
+  flex-shrink: 0;
+}
+
+/* ── Error message ── */
+.rs1__errmsg {
+  font-family: var(--font-ui);
+  font-size: 0.67rem;
+  color: #e53e3e;
+}
+
+/* ── Footer ── */
+.rs1__footer {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.rs1__footer-link {
+  color: var(--color-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.rs1__footer-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .rs1__row--2,
+  .rs1__row--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .rs1__header {
     flex-direction: column;
   }
 }
