@@ -53,7 +53,7 @@
 }
 
 .auth-layout__tagline {
-  font-family: 'Roboto', sans-serif;
+  font-family:'LEMON MILK Pro FTR', sans-serif;
   font-size: 0.85rem;
   color: var(--color-text-muted);
   line-height: 1.7;
@@ -169,6 +169,7 @@
   text-orientation: mixed;
   transform: rotate(180deg);
   font-family: 'LemonMilk' !important;
+  margin-left: 35%;
   font-weight: 700;
   font-size: 0.72rem;
   letter-spacing: 0.2em;
@@ -197,12 +198,13 @@
   left: 550px;
   right: 0;
   display: flex;
-  flex-direction: column;        /* stack header above card */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;                     /* breathing room between header and card */
-  padding: 48px;
+  gap: 12px;
+  padding: 32px 40px;        /* tighter padding so card breathes */
   background: transparent;
+  overflow-y: auto;          /* allow scroll if content is tall */
 }
 
 .auth-layout__main::before {
@@ -219,39 +221,40 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
-/* ── FORM HEADER (outside the card) ── */
+/* ── FORM HEADER ── */
 .auth-layout__form-header {
   width: 100%;
-  max-width: 480px;              /* matches the card width exactly */
-  text-align: center;
+  max-width: 820px;
+  text-align: left;
+  margin-bottom: 4px;
 }
 
 .auth-layout__form-title {
   font-family: 'LEMON MILK Pro FTR', sans-serif;
-  font-size: 3.6rem;
+  font-size: 2.8rem;         /* slightly smaller — less dominating */
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--color-navy);
   line-height: 1;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .auth-layout__form-subtitle {
-  font-family: 'LemonMilk' !important;
+  font-family: 'LEMON MILK Pro FTR', sans-serif;
   font-weight: 400;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
 }
 
-/* ── FORM CARD (fields only) ── */
+/* ── FORM CARD ── */
 .auth-layout__form-wrapper {
   width: 100%;
-  max-width: 480px;
+  max-width: 870px;
   position: relative;
   z-index: 20;
   background: var(--color-white);
   border-radius: 20px;
-  padding: 40px;
+  padding: 32px 40px;        /* balanced padding */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
   box-shadow 0.5s ease;
