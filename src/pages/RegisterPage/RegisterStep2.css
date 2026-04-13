@@ -1,0 +1,6 @@
+/* ============================================
+   RegisterStep2.css
+   Imports shared step styles from RegisterStep1.css
+   Add any step-2-specific overrides below.
+   ============================================ */
+@import './RegisterStep1.css';

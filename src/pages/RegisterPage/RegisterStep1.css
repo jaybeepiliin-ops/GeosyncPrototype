@@ -1,0 +1,194 @@
+/* ============================================
+   RegisterStep1.css — shared base for all steps
+   ============================================ */
+
+.reg-step {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.reg-step__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.reg-step__meta {
+  flex: 1;
+}
+
+.reg-step__title {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
+.reg-step__subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.reg-step__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Progress bars */
+.reg-step__progress {
+  display: flex;
+  gap: 6px;
+}
+
+.reg-step__progress-bar {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--color-gray-200);
+}
+
+.reg-step__progress-bar--active {
+  background: var(--color-blue, #1d7cda);
+}
+
+.reg-step__progress-bar--done {
+  background: var(--color-blue, #1d7cda);
+}
+
+/* Section */
+.reg-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reg-section__title {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reg-section__icon {
+  font-size: 1rem;
+}
+
+.reg-section__divider {
+  height: 1px;
+  background: var(--color-gray-200);
+}
+
+/* Grid layouts */
+.reg-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.reg-grid--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.reg-grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Custom field (select) */
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reg-field__label {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-text);
+}
+
+.reg-field__required {
+  color: var(--color-danger, #e53e3e);
+  margin-left: 2px;
+}
+
+.reg-field__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--color-input-bg, #fff);
+  border: 1.5px solid var(--color-gray-300, #d1d5db);
+  border-radius: 6px;
+  padding: 9px 32px 9px 10px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+
+.reg-field__select:focus {
+  outline: none;
+  border-color: var(--color-blue, #1d7cda);
+  box-shadow: 0 0 0 3px rgba(29, 124, 218, 0.12);
+}
+
+.reg-field__select--error {
+  border-color: var(--color-danger, #e53e3e);
+}
+
+.reg-field__error {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--color-danger, #e53e3e);
+}
+
+/* Footer */
+.reg-step__footer {
+  text-align: center;
+  padding-top: 4px;
+}
+
+.reg-step__login-text {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.reg-step__login-link {
+  color: var(--color-link);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.reg-step__login-link:hover {
+  color: var(--color-blue);
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .reg-grid--2,
+  .reg-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .reg-step__header {
+    flex-direction: column;
+  }
+}
